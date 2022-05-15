@@ -1,25 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef } from "react";
 
-const useScroll = () => {
-  const [state, setState] = useState({
-    x: 0,
-    y: 0,
-  });
-  const onScroll = () => {
-    console.log([window.screenX, window.screenY]);
-    setState({ y: window.screenY, x: window.screenX });
+const useFullScreen = (onFullScreen) => {
+  const element = useRef();
+  console.log(element);
+  const triggerFull = () => {
+    if (!element.current) return;
+    element.current.requestFullScreen();
+    if (onFullScreen || typeof onFullScreen === "function") onFullScreen(true);
   };
-  useEffect(() => {
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  return state;
+  const exitFull = () => {
+    document.exitFullscreen();
+    if (onFullScreen || typeof onFullScreen === "function") onFullScreen(false);
+  };
+  return { element, triggerFull, exitFull };
 };
+
 const App = () => {
-  const { y } = useScroll();
+  const onFullScreen = (isFull) => {
+    console.log(isFull ? "full" : "small");
+  };
+  const { element, triggerFull, exitFull } = useFullScreen(onFullScreen);
   return (
     <div className="App" style={{ height: "1000vh" }}>
-      <h1 style={{ position: "fixed", color: y > 100 ? "red" : "blue" }}>Hi</h1>
+      <img
+        ref={element}
+        src="https://i.ibb.co/R6RwNxx/grape.jpg"
+        alt="test-img"
+      />
+
+      <button onClick={triggerFull}>Make Full screen</button>
+      <button onClick={exitFull}>Exit Full screen</button>
     </div>
   );
 };
