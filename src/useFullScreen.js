@@ -1,4 +1,5 @@
 import { useRef } from "react";
+// @todo check it up again
 export const useFullScreen = (onFullScreen) => {
   const element = useRef();
   console.log(element);
