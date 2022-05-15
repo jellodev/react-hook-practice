@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useInput } from "./UseInput";
+import React from "react";
 import { useTabs } from "./UseTab";
 
 const content = [
