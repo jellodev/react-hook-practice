@@ -1,37 +1,25 @@
-import React, { useRef } from "react";
+import React from "react";
 
-const useFullScreen = (onFullScreen) => {
-  const element = useRef();
-  console.log(element);
-  const triggerFull = () => {
-    if (!element.current) return;
-    element.current.requestFullScreen();
-    if (onFullScreen || typeof onFullScreen === "function") onFullScreen(true);
+const useNotification = (title, options) => {
+  if (!("Notification" in window)) return;
+  const fireNotification = () => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission().then((permission) => {
+        if (permission !== "granted") return;
+      });
+    } else {
+      new Notification(title, options);
+    }
   };
-  const exitFull = () => {
-    document.exitFullscreen();
-    if (onFullScreen || typeof onFullScreen === "function") onFullScreen(false);
-  };
-  return { element, triggerFull, exitFull };
+  return fireNotification;
 };
 
 const App = () => {
-  const onFullScreen = (isFull) => {
-    console.log(isFull ? "full" : "small");
-  };
-  const { element, triggerFull, exitFull } = useFullScreen(onFullScreen);
+  const fireNotification = useNotification("hi", {});
   return (
     <div className="App" style={{ height: "1000vh" }}>
-      <img
-        ref={element}
-        src="https://i.ibb.co/R6RwNxx/grape.jpg"
-        alt="test-img"
-      />
-
-      <button onClick={triggerFull}>Make Full screen</button>
-      <button onClick={exitFull}>Exit Full screen</button>
+      <button onClick={fireNotification}>Notification</button>
     </div>
   );
 };
-
 export default App;
